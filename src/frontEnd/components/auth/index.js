@@ -31,7 +31,7 @@ export const LoginComponents = () => {
             //     setPass(e.target.value);
             //   }}
           />
-          <Captcha />
+          <Captcha placeholder={"Captcha"} length={5} />
           <Button
             variant="contained"
             color="secondary"
