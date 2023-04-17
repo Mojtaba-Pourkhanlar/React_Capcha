@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import PropTypes from "prop-types";
+
 import {
   root,
   rnc,
@@ -11,17 +13,115 @@ import {
   label,
 } from "../../styles";
 
-export const Captcha = () => {
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * max - min) + min;
+}
+
+function generateCaptcha(max) {
+  let text = "";
+  let i;
+  for (i = 0; i < max; i += 1) {
+    switch (Math.floor(Math.random() * 3)) {
+      case 0:
+        text += String.fromCharCode(48 + Math.floor(Math.random() * 10));
+        break;
+      case 1:
+        text += String.fromCharCode(65 + Math.floor(Math.random() * 26));
+        break;
+      case 2:
+        text += String.fromCharCode(97 + Math.floor(Math.random() * 26));
+        break;
+      default:
+        break;
+    }
+  }
+  return text;
+}
+
+export const Captcha = (props) => {
+  const { length, onRefresh, onChange, placeholder, error, helper } = props;
+
+  const canvas = useRef(null);
+
+  const [solution, setSolution] = useState(
+    generateCaptcha(length).toString().toUpperCase()
+  );
+  const [input, setInput] = useState("");
+
+  useEffect(() => {
+    setInput("");
+    return () => {
+      setInput("");
+    };
+  }, []);
+
+  useEffect(() => {
+    drawCaptcha();
+  }, []);
+
+  useEffect(() => {
+    drawCaptcha();
+  }, [solution]);
+
+  const drawCaptcha = () => {
+    const { width, height } = canvas.current;
+    const ctx = canvas.current.getContext("2d");
+    ctx.clearRect(0, 0, width, height);
+    ctx.font = `${getRandomInt(25, 30)}px serif `;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(solution, width / 2, height / 2 + 3);
+    ctx.strokeStyle = "#ccc";
+
+    ctx.beginPath();
+    ctx.moveTo(getRandomInt(5, 20), height - getRandomInt(5, 20));
+    ctx.lineTo(width - getRandomInt(5, 20), getRandomInt(5, 20));
+    ctx.stroke();
+    ctx.moveTo(getRandomInt(15, 30), height - getRandomInt(15, 30));
+    ctx.lineTo(width - getRandomInt(15, 30), getRandomInt(15, 30));
+    ctx.stroke();
+    ctx.moveTo(
+      getRandomInt(width / 10, width / 10 + 10),
+      height - getRandomInt(15, 30)
+    );
+    ctx.lineTo(getRandomInt(width / 2, width / 2 + 10), getRandomInt(5, 20));
+    ctx.stroke();
+    ctx.closePath();
+  };
+
+  const refresh = () => {
+    setSolution(generateCaptcha(length).toString().toUpperCase());
+    setInput("");
+    onRefresh();
+  };
+
+  const playAudio = () => {
+    const audio = new SpeechSynthesisUtterance(
+      solution.toString().split("").join("")
+    );
+    audio.rate = 0.6;
+    window.speechSynthesis.speak(audio);
+  };
+
+  const handleChange = (e) => {
+    setInput(e.target.value);
+    onchange(
+      e.target.value.toLowerCase() === solution.toString().toUpperCase()
+    );
+  };
+
   return (
     <div style={root}>
-      {/* <p style={label}>{"placeholder"}</p> */}
+      <p style={label}>{placeholder}</p>
       <div style={rnc}>
         <div style={rncRow}>
           <div style={rncColumn}>
             <button
               type="button"
               aria-label="get new captcha"
-              // onClick={refresh}
+              onClick={refresh}
               style={rncButton}
               data-testid="captcha-refresh"
             >
@@ -37,7 +137,7 @@ export const Captcha = () => {
             <button
               type="button"
               aria-label="play audio"
-              // onClick={playAudio}
+              onClick={playAudio}
               style={rncButton}
               data-testid="captcha-audio"
             >
@@ -54,7 +154,7 @@ export const Captcha = () => {
             </button>
           </div>
           <canvas
-            //   ref={canvas}
+            ref={canvas}
             width={120}
             height={40}
             style={rncCanvas}
@@ -62,15 +162,27 @@ export const Captcha = () => {
           />
         </div>
         <input
-          // value={input}
-          // onChange={handleChange}
+          value={input}
+          onChange={handleChange}
           style={rncInput}
           data-testid="captcha-input"
           maxLength={5}
           autoComplete="new-password"
         />
       </div>
-      {/* {error && <p style={error}>{helper}</p>} */}
+      {error && <p style={error}>{helper}</p>}
     </div>
   );
+};
+
+Captcha.defaultProps = {
+  placeholder: "Insert captcha",
+  length: 6,
+};
+
+Captcha.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  onRefresh: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  length: PropTypes.number,
 };
