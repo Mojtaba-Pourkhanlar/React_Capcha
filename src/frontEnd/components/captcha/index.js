@@ -69,7 +69,7 @@ export const Captcha = (props) => {
     const { width, height } = canvas.current;
     const ctx = canvas.current.getContext("2d");
     ctx.clearRect(0, 0, width, height);
-    ctx.font = `${getRandomInt(25, 30)}px serif `;
+    ctx.font = `${getRandomInt(35, 40)}px serif `;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(solution, width / 2, height / 2 + 3);
@@ -107,7 +107,7 @@ export const Captcha = (props) => {
 
   const handleChange = (e) => {
     setInput(e.target.value);
-    onchange(
+    onChange(
       e.target.value.toLowerCase() === solution.toString().toUpperCase()
     );
   };
