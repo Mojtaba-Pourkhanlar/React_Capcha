@@ -58,6 +58,7 @@ export const rncCanvas = {
   boxSizing: "border-box",
   backgroundColor: "transparent",
   borderRadius: 10,
+  background: "#616161",
 };
 export const rncButton = {
   display: "flex",
