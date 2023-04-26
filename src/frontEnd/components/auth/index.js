@@ -1,61 +1,66 @@
 import React, { useEffect } from "react";
 import DivLayout from "../../helpers/DivLayout";
 import { box, divLayout } from "../../styles";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Captcha } from "../captcha";
 import { useState } from "react";
 
 export const LoginComponents = () => {
   const [captchaMatch, setCaptchaMatch] = useState(false);
-  // const [captchaHelper, setCaptchaHelper] = useState("");
-  // const [captchaError, setCaptchaError] = useState(false);
 
-  const [id, setId] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    document.addEventListener("keydown", listener);
-    return () => {
-      document.removeEventListener("keydown", listener);
-      clearInputs();
-    };
-  }, []);
+  const [userNameError, setUserNameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [captchaError, setCaptchaError] = useState(false);
 
-  const clearInputs = () => {
-    setId(null);
-    setPassword(null);
-  };
-  const listener = (event) => {
-    if (event.code === "Enter" || event.code === "NumpadEnter") {
-      document.getElementById("signinBtn").click();
-    }
-  };
+  const [userNameHelper, setUserNameHelper] = useState("");
+  const [passwordHelper, setPasswordHelper] = useState("");
+  const [captchaHelper, setCaptchaHelper] = useState("");
 
-  const setIdHandler = (event) => {
+  const setUserNameInput = (event) => {
     let number = event.target.value.trim();
-    setId(number);
+    setUserName(number);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     let error = false;
-    if (!id) {
+    if (userName.length < 6) {
+      setUserNameHelper("The characters should be more than 6");
+      setUserNameError(true);
       error = true;
     }
-    if (!password) {
+    if (password.length < 6) {
+      setPasswordHelper("The characters should be more than 6");
+      setPasswordError(true);
       error = true;
     }
-    if (!captchaMatch) {
-      // setCaptchaError(true);
+    if (captchaMatch) {
+      setCaptchaHelper("The entered value is not correct");
+      setCaptchaError(true);
       error = true;
     }
     if (!error) {
-      console.log("Yeah!");
+      console.log("True");
+      return (
+        <div>
+          <Snackbar open={true} autoHideDuration={6000}>
+            <Alert severity="success" sx={{ width: "100%" }}>
+              Login Success!
+            </Alert>
+          </Snackbar>
+        </div>
+      );
     }
-    console.log("ID", id);
-    console.log("Pass", password);
-    console.log("Captcha", captchaMatch);
-    console.log("error", error);
+    console.log("error : ", error);
   };
 
   return (
@@ -63,15 +68,18 @@ export const LoginComponents = () => {
       <Box sx={box}>
         <Typography variant="h3">Login_Captcha</Typography>
 
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <div>
           <TextField
             label="Username"
             variant="outlined"
             fullWidth
-            required
             onChange={(e) => {
-              setIdHandler(e);
+              setUserNameInput(e);
+              setUserNameError(false);
+              setUserNameHelper("");
             }}
+            error={userNameError}
+            helperText={userNameHelper}
           />
           <TextField
             label="Password"
@@ -79,35 +87,40 @@ export const LoginComponents = () => {
             type="password"
             fullWidth
             sx={{ mt: "15px" }}
-            required
             onChange={(e) => {
               setPassword(e.target.value);
+              setPasswordError(false);
+              setPasswordHelper("");
             }}
+            error={passwordError}
+            helperText={passwordHelper}
           />
           <Captcha
             placeholder={"Captcha"}
-            length={5}
+            length={3}
             onChange={(match) => {
               setCaptchaMatch(match);
-              // setCaptchaError(false);
-              // setCaptchaHelper("");
+              setCaptchaError(false);
+              setCaptchaHelper("");
             }}
             onRefresh={() => {
               setCaptchaMatch(false);
-              // setCaptchaError(false);
-              // setCaptchaHelper("");
+              setCaptchaError(false);
+              setCaptchaHelper("");
             }}
+            helper={captchaHelper}
+            error={captchaError}
           />
           <Button
             variant="contained"
             color="secondary"
-            type="submit"
             fullWidth
             sx={{ mt: "30px", height: "50px" }}
+            onClick={handleSubmit}
           >
             Login
           </Button>
-        </form>
+        </div>
       </Box>
     </DivLayout>
   );
