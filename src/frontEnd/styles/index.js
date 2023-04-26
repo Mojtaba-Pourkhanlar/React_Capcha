@@ -82,7 +82,7 @@ export const rncButton = {
     fill: "#ccc",
   },
 };
-export const error = {
+export const errorStyle = {
   color: "#d32f2f",
   fontSize: 10,
   position: "absolute",

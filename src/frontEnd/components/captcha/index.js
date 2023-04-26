@@ -8,7 +8,7 @@ import {
   rncColumn,
   rncCanvas,
   rncButton,
-  error,
+  errorStyle,
   rncInput,
   label,
 } from "../../styles";
@@ -170,7 +170,7 @@ export const Captcha = (props) => {
           autoComplete="new-password"
         />
       </div>
-      {error && <p style={error}>{helper}</p>}
+      {error && <p style={errorStyle}>{helper}</p>}
     </div>
   );
 };
