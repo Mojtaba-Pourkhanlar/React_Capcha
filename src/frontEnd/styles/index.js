@@ -54,11 +54,11 @@ export const rncColumn = {
 };
 export const rncCanvas = {
   width: 130,
-  height: 38,
+  height: "80%",
   boxSizing: "border-box",
   backgroundColor: "transparent",
-  borderRadius: 10,
-  background: "#616161",
+  borderRadius: 3,
+  background: "#e0e0e0",
 };
 export const rncButton = {
   display: "flex",
@@ -75,7 +75,7 @@ export const rncButton = {
   boxSizing: "border-box",
   borderRadius: 4,
   fill: "#ccc",
-  marginRight: 3,
+  margin:"0 10px 0 0",
   "& SVG": {
     width: 20,
     height: 19,
@@ -84,12 +84,10 @@ export const rncButton = {
 };
 export const errorStyle = {
   color: "#d32f2f",
-  fontSize: 10,
+  fontSize: 15,
   position: "absolute",
-  width: "98%",
-  marginRight: 30,
-  marginTop: 67,
-  textAlign: "end",
+  marginTop: 75,
+  textAlign: "start",
 };
 export const rncInput = {
   width: "inherit",

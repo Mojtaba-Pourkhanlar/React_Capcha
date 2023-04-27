@@ -1,6 +1,4 @@
-import React, { useEffect } from "react";
-import DivLayout from "../../helpers/DivLayout";
-import { box, divLayout } from "../../styles";
+import { useState } from "react";
 import {
   Alert,
   Box,
@@ -9,12 +7,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import DivLayout from "../../helpers/DivLayout";
 import { Captcha } from "../captcha";
-import { useState } from "react";
+import { box, divLayout } from "../../styles";
 
 export const LoginComponents = () => {
+  // Snackbar
+  const [open, setOpen] = useState(false);
+  // Username , Password , Captcha
   const [captchaMatch, setCaptchaMatch] = useState(false);
-
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
@@ -31,6 +32,13 @@ export const LoginComponents = () => {
     setUserName(number);
   };
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   const handleSubmit = () => {
     let error = false;
     if (userName.length < 6) {
@@ -43,24 +51,14 @@ export const LoginComponents = () => {
       setPasswordError(true);
       error = true;
     }
-    if (captchaMatch) {
+    if (!captchaMatch) {
       setCaptchaHelper("The entered value is not correct");
       setCaptchaError(true);
       error = true;
     }
     if (!error) {
-      console.log("True");
-      return (
-        <div>
-          <Snackbar open={true} autoHideDuration={6000}>
-            <Alert severity="success" sx={{ width: "100%" }}>
-              Login Success!
-            </Alert>
-          </Snackbar>
-        </div>
-      );
+      setOpen(true);
     }
-    console.log("error : ", error);
   };
 
   return (
@@ -96,8 +94,8 @@ export const LoginComponents = () => {
             helperText={passwordHelper}
           />
           <Captcha
-            placeholder={"Captcha"}
-            length={3}
+            placeholder={""}
+            length={5}
             onChange={(match) => {
               setCaptchaMatch(match);
               setCaptchaError(false);
@@ -122,6 +120,18 @@ export const LoginComponents = () => {
           </Button>
         </div>
       </Box>
+
+      <div>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Login Successfully!
+          </Alert>
+        </Snackbar>
+      </div>
     </DivLayout>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
-import { Login } from "./frontEnd/containers/Login";
-import { Layout } from "./frontEnd/components/Layout";
 import { ThemeProvider } from "@mui/material";
+import { Layout } from "./frontEnd/components/Layout";
+import { Login } from "./frontEnd/containers/Login";
 import { theme } from "./frontEnd/theme";
 
 const Container = () => {
