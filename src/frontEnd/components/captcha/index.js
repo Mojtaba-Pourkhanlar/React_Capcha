@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
-
 import {
   root,
   rnc,
@@ -16,7 +15,7 @@ import {
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return Math.floor(Math.random() * max - min) + min;
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function generateCaptcha(max) {
@@ -59,36 +58,38 @@ export const Captcha = (props) => {
 
   useEffect(() => {
     drawCaptcha();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     drawCaptcha();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solution]);
 
   const drawCaptcha = () => {
     const { width, height } = canvas.current;
     const ctx = canvas.current.getContext("2d");
     ctx.clearRect(0, 0, width, height);
-    ctx.font = `${getRandomInt(35, 40)}px serif `;
+    ctx.font = `${getRandomInt(25, 30)}px serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(solution, width / 2, height / 2 + 3);
-    ctx.strokeStyle = "#ccc";
+    ctx.strokeStyle = "#616161";
 
     ctx.beginPath();
-    ctx.moveTo(getRandomInt(5, 20), height - getRandomInt(5, 20));
-    ctx.lineTo(width - getRandomInt(5, 20), getRandomInt(5, 20));
-    ctx.stroke();
-    ctx.moveTo(getRandomInt(15, 30), height - getRandomInt(15, 30));
-    ctx.lineTo(width - getRandomInt(15, 30), getRandomInt(15, 30));
-    ctx.stroke();
-    ctx.moveTo(
-      getRandomInt(width / 10, width / 10 + 10),
-      height - getRandomInt(15, 30)
-    );
-    ctx.lineTo(getRandomInt(width / 2, width / 2 + 10), getRandomInt(5, 20));
-    ctx.stroke();
-    ctx.closePath();
+      ctx.moveTo(getRandomInt(5, 20), height - getRandomInt(5, 20));
+      ctx.lineTo(width - getRandomInt(5, 20), getRandomInt(5, 20));
+      ctx.stroke();
+      ctx.moveTo(getRandomInt(15, 30), height - getRandomInt(15, 30));
+      ctx.lineTo(width - getRandomInt(15, 30), getRandomInt(15, 30));
+      ctx.stroke();
+      ctx.moveTo(
+        getRandomInt(width / 10, width / 10 + 10),
+        height - getRandomInt(15, 30)
+      );
+      ctx.lineTo(getRandomInt(width / 2, width / 2 + 10), getRandomInt(5, 20));
+      ctx.stroke();
+      ctx.closePath();
   };
 
   const refresh = () => {
@@ -99,7 +100,7 @@ export const Captcha = (props) => {
 
   const playAudio = () => {
     const audio = new SpeechSynthesisUtterance(
-      solution.toString().split("").join("")
+      solution.toString().split("").join(" ")
     );
     audio.rate = 0.6;
     window.speechSynthesis.speak(audio);
@@ -107,8 +108,9 @@ export const Captcha = (props) => {
 
   const handleChange = (e) => {
     setInput(e.target.value);
+
     onChange(
-      e.target.value.toLowerCase() === solution.toString().toUpperCase()
+      e.target.value.toLowerCase() === solution.toString().toLowerCase()
     );
   };
 
